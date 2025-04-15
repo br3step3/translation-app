@@ -64,7 +64,6 @@ Please preserve speaker names and dialogue formatting.
 
 ${text}`
 
-${text}`
           }
         ]
       }
