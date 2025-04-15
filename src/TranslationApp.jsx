@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
 
 const API_KEY = "AIzaSyB76YGym3LUinbkPlnI7vNWaxk2jKg44Fc";
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
@@ -152,15 +151,15 @@ export default function TranslationApp() {
         onChange={(e) => setPrompt(e.target.value)}
       />
       <div className="flex justify-center flex-wrap gap-2">
-        <Button onClick={handleGenerate} disabled={isLoadingIndex === 0}>
+        <button onClick={handleGenerate} disabled={isLoadingIndex === 0} className="px-4 py-2 bg-blue-600 text-white rounded">
           {isLoadingIndex === 0 ? "Generating..." : "Create a Story"}
-        </Button>
-        <Button onClick={handleFollowInstruction} disabled={isLoadingIndex === 1} variant="outline">
+        </button>
+        <button onClick={handleFollowInstruction} disabled={isLoadingIndex === 1} className="px-4 py-2 border border-blue-600 text-blue-600 rounded">
           {isLoadingIndex === 1 ? "Generating..." : "Follow Instruction"}
-        </Button>
-        <Button onClick={handleUseOwnText} disabled={isLoadingIndex === 2} variant="secondary">
+        </button>
+        <button onClick={handleUseOwnText} disabled={isLoadingIndex === 2} className="px-4 py-2 bg-gray-300 text-black rounded">
           {isLoadingIndex === 2 ? "Translating..." : "Use My Text"}
-        </Button>
+        </button>
       </div>
       {pairedSentences.length > 0 && (
         <div className="text-lg leading-8 flex flex-wrap">
