@@ -34,7 +34,7 @@ const generateTextFromInstruction = async (instructionText) => {
         role: "user",
         parts: [
           {
-            text: `Follow this instruction exactly as asked. Respond directly and concisely:
+            text: `Follow this instruction exactly as asked. Respond directly and concisely, in a list format if appropriate:
 "${instructionText}"`
           }
         ]
