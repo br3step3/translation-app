@@ -79,7 +79,7 @@ ${text}`
   return rawText
     .split("\n")
     .map(line => {
-      const cleanedLine = line.replace(/^\d+\.?\s*/, "");
+      const cleanedLine = line.replace(/^\s*[\*\d.]+\s*/, "");
       const [en, es] = cleanedLine.split("/").map(s => s.trim());
       return en && es ? { en, es } : null;
     })
