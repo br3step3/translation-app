@@ -58,7 +58,11 @@ const translateTextBlock = async (text) => {
         role: "user",
         parts: [
           {
-            text: `Translate the following English paragraph into Spanish. Return a list where each line contains one English sentence followed by its Spanish translation, separated by a slash (/):
+text: `Translate the following English dialogue into Spanish. 
+Return a list where each line includes the English sentence and its Spanish translation, separated by a slash (/). 
+Please preserve speaker names and dialogue formatting.
+
+${text}`
 
 ${text}`
           }
