@@ -84,8 +84,21 @@ ${text}`
   return rawText
     .split("\n")
     .map(line => {
-      const cleanedLine = line.replace(/^\s*[\*\d.]+\s*/, "");
-      const [en, es] = cleanedLine.split("/").map(s => s.trim());
+      const cleanedLine = line.replace(/^[\*\d.]+\s*/, "");
+      let [en, es] = cleanedLine.split("/").map(s => {
+        // Remove leading/trailing brackets and quotes, but preserve punctuation
+        let str = s.trim().replace(/^\[?"?/, '').replace(/"?\]?$/, '');
+        // If the string ends with a period, exclamation, or question mark, keep it
+        // Otherwise, check if the original line had punctuation at the end and append it
+        return str;
+      });
+      // Preserve sentence-ending punctuation in both English and Spanish parts
+      if (en && !/[.!?]$/.test(en) && /[.!?]$/.test(line)) {
+        en = en + line.match(/[.!?]$/)[0];
+      }
+      if (es && !/[.!?]$/.test(es) && /[.!?]$/.test(line)) {
+        es = es + line.match(/[.!?]$/)[0];
+      }
       return en && es ? { en, es } : null;
     })
     .filter(Boolean);
