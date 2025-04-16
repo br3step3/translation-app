@@ -60,9 +60,9 @@ const translateTextBlock = async (text) => {
         role: "user",
         parts: [
           {
-text: `Translate the following English dialogue into Spanish. 
+text: `Translate the following English text into Spanish. 
 Return a list where each line includes the English sentence and its Spanish translation, separated by a slash (/). 
-Please preserve speaker names and dialogue formatting.
+Please preserve dialogue formatting.
 
 ${text}`
 
@@ -172,13 +172,13 @@ export default function TranslationApp() {
       />
       <div className="flex justify-center flex-wrap gap-2">
         <button onClick={handleGenerate} disabled={isLoadingIndex === 0} className="px-4 py-2 bg-blue-600 text-white rounded">
-          {isLoadingIndex === 0 ? "Generating..." : "Create a Story"}
+          {isLoadingIndex === 0 ? "Generating..." : "Story"}
         </button>
         <button onClick={handleFollowInstruction} disabled={isLoadingIndex === 1} className="px-4 py-2 border border-blue-600 text-blue-600 rounded">
-          {isLoadingIndex === 1 ? "Generating..." : "Follow Instruction"}
+          {isLoadingIndex === 1 ? "Generating..." : "Instruction"}
         </button>
         <button onClick={handleUseOwnText} disabled={isLoadingIndex === 2} className="px-4 py-2 bg-gray-300 text-black rounded">
-          {isLoadingIndex === 2 ? "Translating..." : "Use My Text"}
+          {isLoadingIndex === 2 ? "Translating..." : "My text"}
         </button>
       </div>
       {pairedSentences.length > 0 && (
