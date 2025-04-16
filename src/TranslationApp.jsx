@@ -194,7 +194,7 @@ export default function TranslationApp() {
               style += " bg-blue-100";
             } else if (toggle === 4) {
               displayText = line.en;
-              style += " bg-gray-100";
+              style += " bg-gray-200";
             }
             return (
               <span
