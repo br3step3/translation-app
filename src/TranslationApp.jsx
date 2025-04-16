@@ -170,7 +170,7 @@ export default function TranslationApp() {
         value={prompt}
         onChange={(e) => setPrompt(e.target.value)}
       />
-      <div className="flex justify-center flex-wrap gap-2">
+      <div className="flex justify-center flex-wrap gap-2 mb-6">
         <button onClick={handleGenerate} disabled={isLoadingIndex === 0} className="px-4 py-2 bg-blue-600 text-white rounded">
           {isLoadingIndex === 0 ? "Generating..." : "Story"}
         </button>
