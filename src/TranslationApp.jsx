@@ -62,7 +62,8 @@ const translateTextBlock = async (text) => {
           {
 text: `Translate the following English text into Spanish. 
 Return a list where each line includes the English sentence and its Spanish translation, separated by a slash (/). 
-Please preserve dialogue formatting.
+Please preserve dialogue formatting and ensure each sentence pair is on its own line.
+Do not include any additional formatting or text between pairs.
 
 ${text}`
 
@@ -81,25 +82,58 @@ ${text}`
   const data = await res.json();
   const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || "(No translation)";
 
-  return rawText
+  // Pre-process the raw text to ensure proper line breaks
+  const processedText = rawText
+    .replace(/\n\s*\n/g, '\n') // Remove empty lines
+    .replace(/\n\s*([^\n]+\/[^\n]+)/g, '\n$1'); // Ensure proper line breaks for sentence pairs
+
+  return processedText
     .split("\n")
     .map(line => {
-      const cleanedLine = line.replace(/^[\*\d.]+\s*/, "");
-      let [en, es] = cleanedLine.split("/").map(s => {
-        // Remove leading/trailing brackets and quotes, but preserve punctuation
-        let str = s.trim().replace(/^\[?"?/, '').replace(/"?\]?$/, '');
-        // If the string ends with a period, exclamation, or question mark, keep it
-        // Otherwise, check if the original line had punctuation at the end and append it
-        return str;
-      });
-      // Preserve sentence-ending punctuation in both English and Spanish parts
-      if (en && !/[.!?]$/.test(en) && /[.!?]$/.test(line)) {
-        en = en + line.match(/[.!?]$/)[0];
+      // Skip empty lines
+      if (!line.trim()) return null;
+      
+      const cleanedLine = line.replace(/^[\*\d.]+\s*/, "").trim();
+      
+      // Handle case where the line doesn't contain a slash
+      if (!cleanedLine.includes("/")) return null;
+      
+      // Split by the first slash only to avoid issues with URLs or other slashes in the text
+      const slashIndex = cleanedLine.indexOf("/");
+      let en = cleanedLine.substring(0, slashIndex).trim();
+      let es = cleanedLine.substring(slashIndex + 1).trim();
+      
+      // Clean up both parts - remove quotes, brackets, but preserve punctuation
+      en = en.replace(/^\[?"?/, '').replace(/"?\]?$/, '');
+      es = es.replace(/^\[?"?/, '').replace(/"?\]?$/, '');
+      
+      // Handle case where Spanish text might have gotten mixed with English
+      // This happens when the model doesn't properly separate with slashes
+      if (es.includes("!") && !es.startsWith("¡") && es.length > 50) {
+        // Try to find a better split point
+        const exclamationIndex = es.indexOf("!");
+        if (exclamationIndex > 0 && exclamationIndex < es.length - 20) {
+          // Move the text after exclamation back to English for next iteration
+          const nextEn = es.substring(exclamationIndex + 1).trim();
+          es = es.substring(0, exclamationIndex + 1).trim();
+          // Don't lose this text - it will be processed in the next iteration
+          if (nextEn) {
+            processedText += "\n" + nextEn + " / [Translation pending]";
+          }
+        }
       }
-      if (es && !/[.!?]$/.test(es) && /[.!?]$/.test(line)) {
-        es = es + line.match(/[.!?]$/)[0];
+      
+      // Preserve sentence-ending punctuation
+      if (en && !/[.!?]$/.test(en) && /[.!?]$/.test(cleanedLine)) {
+        en = en + cleanedLine.match(/[.!?]$/)[0];
       }
-      return en && es ? { en, es } : null;
+      
+      // Make sure Spanish punctuation is preserved
+      if (es && !/[.!?¡¿]$/.test(es) && /[.!?]$/.test(cleanedLine)) {
+        es = es + cleanedLine.match(/[.!?]$/)[0];
+      }
+      
+      return (en && es) ? { en, es } : null;
     })
     .filter(Boolean);
 };
@@ -209,16 +243,18 @@ export default function TranslationApp() {
               displayText = line.en;
               style += " bg-gray-300";
             }
+            // Ensure proper spacing between sentences
+            const spaceSuffix = index < pairedSentences.length - 1 ? " " : "";
             return (
               <span
                 key={index}
-                className={`cursor-pointer select-none text-base md:text-lg android-text ${style}`}
+                onClick={() => handleToggle(index)}
                 onTouchStart={(e) => handleTouchStart(e, index)}
                 onTouchMove={handleTouchMove}
                 onTouchEnd={() => handleTouchEnd(index)}
-                onClick={() => handleToggle(index)}
+                className={`cursor-pointer ${style}`}
               >
-                {displayText + " "}
+                {displayText + spaceSuffix}
               </span>
             );
           })}
