@@ -145,6 +145,7 @@ export default function TranslationApp() {
   const [toggleStates, setToggleStates] = useState([]);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
+  const [largeFontSize, setLargeFontSize] = useState(false);
 
   const process = async (action, index) => {
     if (!prompt.trim()) return;
@@ -209,7 +210,13 @@ export default function TranslationApp() {
 
   return (
     <div className="container mx-auto p-4 max-w-3xl">
-      <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">Translation Practice</h1>
+      <h1 
+        className="text-3xl font-bold text-center mb-6 text-gray-800 cursor-pointer hover:text-blue-600 transition-colors"
+        onClick={() => setLargeFontSize(!largeFontSize)}
+        title="Click to toggle font size"
+      >
+        Translation Practice
+      </h1>
       <textarea
         className="w-full p-2 border rounded"
         rows={3}
@@ -229,7 +236,7 @@ export default function TranslationApp() {
         </button>
       </div>
       {pairedSentences.length > 0 && (
-        <div className="text-lg leading-8 flex flex-wrap">
+        <div className={`${largeFontSize ? 'text-2xl' : 'text-lg'} leading-8 flex flex-wrap transition-all duration-300`}>
           {pairedSentences.map((line, index) => {
             const toggle = toggleStates[index];
             let displayText = line.es;
