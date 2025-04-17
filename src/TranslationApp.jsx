@@ -212,11 +212,11 @@ export default function TranslationApp() {
             return (
               <span
                 key={index}
-                onClick={() => handleToggle(index)}
+                className={`cursor-pointer select-none text-base md:text-lg android-text ${style}`}
                 onTouchStart={(e) => handleTouchStart(e, index)}
                 onTouchMove={handleTouchMove}
                 onTouchEnd={() => handleTouchEnd(index)}
-                className={`cursor-pointer ${style}`}
+                onClick={() => handleToggle(index)}
               >
                 {displayText + " "}
               </span>
